@@ -5,7 +5,7 @@ import path from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { loadEnv, zoho, bigId, bigIds } from "./zoho.js";
+import { loadEnv, zoho, bigId, bigIds, setting } from "./zoho.js";
 
 loadEnv();
 
@@ -164,7 +164,7 @@ tool(
 );
 
 function saveFile(buffer, fileName, saveTo) {
-  const dir = process.env.ZOHO_DOWNLOAD_DIR || path.join(os.homedir(), "Downloads", "zoho-mail-attachments");
+  const dir = (setting("ZOHO_DOWNLOAD_DIR") && expandHome(setting("ZOHO_DOWNLOAD_DIR"))) || path.join(os.homedir(), "Downloads", "zoho-mail-attachments");
   const target = saveTo ? path.resolve(expandHome(saveTo)) : path.join(dir, path.basename(fileName));
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, buffer);
@@ -215,7 +215,7 @@ tool(
 let primaryAddress;
 async function fromAddress(given) {
   if (given) return given;
-  if (process.env.ZOHO_FROM_ADDRESS) return process.env.ZOHO_FROM_ADDRESS;
+  if (setting("ZOHO_FROM_ADDRESS")) return setting("ZOHO_FROM_ADDRESS");
   if (!primaryAddress) {
     const acc = await zoho("GET", "");
     primaryAddress = acc.primaryEmailAddress || acc.mailboxAddress || acc.emailAddress?.find((e) => e.isPrimary)?.mailId;
@@ -409,8 +409,8 @@ tool(
   { folderId, messageId, expunge: z.boolean().optional().describe("Permanently delete instead of moving to Trash") },
   { readOnlyHint: false, destructiveHint: true, openWorldHint: true },
   (a) => {
-    if (a.expunge && process.env.ZOHO_ALLOW_PERMANENT_DELETE !== "true") {
-      throw new Error("Permanent delete is disabled. Set ZOHO_ALLOW_PERMANENT_DELETE=true in .env to allow expunge.");
+    if (a.expunge && setting("ZOHO_ALLOW_PERMANENT_DELETE") !== "true") {
+      throw new Error("Permanent delete is disabled. Enable it in the plugin configuration (or set ZOHO_ALLOW_PERMANENT_DELETE=true in .env).");
     }
     return zoho("DELETE", msgPath(a, ""), { query: { expunge: a.expunge } });
   }

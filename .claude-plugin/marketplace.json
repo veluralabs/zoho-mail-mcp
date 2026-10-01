@@ -1,0 +1,15 @@
+{
+  "name": "veluralabs",
+  "description": "Plugins from Velura Labs",
+  "owner": {
+    "name": "Velura Labs",
+    "email": "admin@veluralabs.com"
+  },
+  "plugins": [
+    {
+      "name": "velura-zoho-mail",
+      "source": "./",
+      "description": "Read, search, send and organise Zoho Mail from Claude through a local MCP server."
+    }
+  ]
+}

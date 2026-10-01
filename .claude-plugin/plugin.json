@@ -1,0 +1,59 @@
+{
+  "name": "velura-zoho-mail",
+  "displayName": "Velura Zoho Mail",
+  "version": "1.0.0",
+  "description": "Read, search, send and organise Zoho Mail from Claude through a local MCP server that talks to the Zoho Mail REST API.",
+  "author": {
+    "name": "Velura Labs",
+    "email": "admin@veluralabs.com",
+    "url": "https://veluralabs.com"
+  },
+  "repository": "https://github.com/veluralabs/zoho-mail-mcp",
+  "license": "MIT",
+  "keywords": ["zoho", "zoho-mail", "email", "mcp"],
+  "userConfig": {
+    "client_id": {
+      "type": "string",
+      "title": "Zoho client ID",
+      "description": "Client ID of your Zoho self client, created at api-console.zoho.com (use your data center's domain)",
+      "required": true,
+      "sensitive": true
+    },
+    "client_secret": {
+      "type": "string",
+      "title": "Zoho client secret",
+      "description": "Client secret of the same Zoho self client",
+      "required": true,
+      "sensitive": true
+    },
+    "refresh_token": {
+      "type": "string",
+      "title": "Zoho refresh token",
+      "description": "Refresh token granted with scopes ZohoMail.messages.ALL, ZohoMail.accounts.READ and ZohoMail.folders.READ",
+      "required": true,
+      "sensitive": true
+    },
+    "data_center": {
+      "type": "string",
+      "title": "Zoho data center",
+      "description": "Domain suffix of your Zoho account: com (US), in (India), eu, com.au, jp, sa or ca",
+      "default": "com"
+    },
+    "account_id": {
+      "type": "string",
+      "title": "Mail account ID (optional)",
+      "description": "Leave empty to use your default Zoho Mail account"
+    },
+    "from_address": {
+      "type": "string",
+      "title": "Default sender address (optional)",
+      "description": "Leave empty to send from the account's primary address"
+    },
+    "allow_permanent_delete": {
+      "type": "boolean",
+      "title": "Allow permanent delete",
+      "description": "When off, deleting an email always moves it to Trash",
+      "default": false
+    }
+  }
+}

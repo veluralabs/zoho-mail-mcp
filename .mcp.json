@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "zoho-mail": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/src/index.js"],
+      "env": {
+        "ZOHO_CLIENT_ID": "${user_config.client_id}",
+        "ZOHO_CLIENT_SECRET": "${user_config.client_secret}",
+        "ZOHO_REFRESH_TOKEN": "${user_config.refresh_token}",
+        "ZOHO_DATA_CENTER": "${user_config.data_center}",
+        "ZOHO_ACCOUNT_ID": "${user_config.account_id}",
+        "ZOHO_FROM_ADDRESS": "${user_config.from_address}",
+        "ZOHO_ALLOW_PERMANENT_DELETE": "${user_config.allow_permanent_delete}"
+      }
+    }
+  }
+}

@@ -3,7 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const TOKEN_CACHE = path.join(ROOT, ".token-cache.json");
+// As a plugin the install directory is replaced on update, so state goes to the plugin data dir.
+const TOKEN_CACHE = path.join(process.env.CLAUDE_PLUGIN_DATA || ROOT, ".token-cache.json");
 
 // Load .env from the repo root so the Claude config never has to hold secrets.
 // Real environment variables win over the file.
@@ -17,21 +18,40 @@ export function loadEnv() {
   }
 }
 
+// Unset plugin options can arrive as "" or as an unsubstituted "${user_config.x}".
+const env = (k) => {
+  const v = process.env[k]?.trim();
+  return v && !v.startsWith("${") ? v : undefined;
+};
+
+// Data center -> hosts. Canada is on zohocloud.ca; the rest follow zoho.<tld>.
+function hosts() {
+  const dc = (env("ZOHO_DATA_CENTER") || "com").toLowerCase().replace(/^\./, "");
+  const domain = dc === "ca" ? "zohocloud.ca" : `zoho.${dc}`;
+  return {
+    accountsUrl: env("ZOHO_ACCOUNTS_URL") || `https://accounts.${domain}`,
+    mailApi: env("ZOHO_MAIL_API") || `https://mail.${domain}/api`,
+  };
+}
+
 export function config() {
   const need = (k) => {
-    const v = process.env[k];
-    if (!v) throw new Error(`Missing ${k}. Copy .env.example to .env in ${ROOT} and fill it in.`);
+    const v = env(k);
+    if (!v) throw new Error(`Missing ${k}. Set it in the plugin's configuration, or in a .env file in ${ROOT}.`);
     return v;
   };
+  const h = hosts();
   return {
     clientId: need("ZOHO_CLIENT_ID"),
     clientSecret: need("ZOHO_CLIENT_SECRET"),
     refreshToken: need("ZOHO_REFRESH_TOKEN"),
-    accountsUrl: need("ZOHO_ACCOUNTS_URL").replace(/\/+$/, ""),
-    mailApi: need("ZOHO_MAIL_API").replace(/\/+$/, ""),
-    accountId: need("ZOHO_ACCOUNT_ID"),
+    accountsUrl: h.accountsUrl.replace(/\/+$/, ""),
+    mailApi: h.mailApi.replace(/\/+$/, ""),
+    accountId: env("ZOHO_ACCOUNT_ID"),
   };
 }
+
+export const setting = env;
 
 // Zoho IDs are 64-bit and overflow JS numbers. Responses: quote any bare 16+ digit
 // integer before JSON.parse. Requests: IDs travel as BigId and are emitted unquoted.
@@ -105,6 +125,19 @@ async function accessToken(force = false) {
   return refreshing;
 }
 
+// ZOHO_ACCOUNT_ID is optional: without it, use the user's default mail account.
+let discoveredAccountId;
+async function accountId(c) {
+  if (c.accountId) return c.accountId;
+  if (!discoveredAccountId) {
+    const accounts = await zoho("GET", "//accounts");
+    const acc = accounts.find((a) => a.isDefaultAccount) || accounts[0];
+    if (!acc) throw new ZohoError("No mail account found for this Zoho user.");
+    discoveredAccountId = acc.accountId;
+  }
+  return discoveredAccountId;
+}
+
 /**
  * Call the Mail API. `path` is relative to /accounts/{accountId} unless it starts with "//"
  * (then it is relative to the API base). Returns parsed `data`, or for `binary: true`
@@ -114,7 +147,7 @@ export async function zoho(method, apiPath, { query, body, rawBody, contentType,
   const c = config();
   const base = apiPath.startsWith("//")
     ? `${c.mailApi}${apiPath.slice(1)}`
-    : `${c.mailApi}/accounts/${c.accountId}${apiPath}`;
+    : `${c.mailApi}/accounts/${await accountId(c)}${apiPath}`;
   const url = new URL(base);
   for (const [k, v] of Object.entries(query || {})) {
     if (v !== undefined && v !== null) url.searchParams.set(k, String(v));

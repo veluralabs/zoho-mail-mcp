@@ -1,40 +1,46 @@
-# zoho-mail-mcp
+# Velura Zoho Mail
 
-Local MCP server that exposes the Zoho Mail REST API to Claude (Claude Code and Claude Desktop). Runs on your machine over stdio; credentials stay in a local `.env`.
+A Claude plugin that lets Claude read, search, send and organise your Zoho Mail. It bundles a local MCP server that runs on your own machine and talks directly to the Zoho Mail REST API, plus a skill that teaches Claude Zoho's search syntax and to confirm with you before sending.
 
-## Install
+## What it runs and connects to
 
-Needs Node 20+.
+- Starts one local Node process (`src/index.js`) over stdio. Needs Node 20 or later.
+- Connects only to your Zoho data center: `accounts.zoho.<dc>` to refresh the access token and `mail.zoho.<dc>` for mail. Nothing is sent anywhere else.
+- Stores the short-lived access token in a cache file in the plugin's data directory. Your client ID, client secret and refresh token are kept in the system credential store by Claude.
+- Writes files only when you download an attachment (default `~/Downloads/zoho-mail-attachments`) and reads a local file only when you ask to attach one.
+
+## Install as a plugin
+
+```bash
+claude plugin marketplace add veluralabs/zoho-mail-mcp
+```
+
+```bash
+claude plugin install velura-zoho-mail@veluralabs
+```
+
+Claude then asks for the configuration values below.
+
+| Option | Notes |
+|---|---|
+| Zoho client ID, client secret, refresh token | From a self client at the Zoho API console for your data center. The refresh token needs the scopes `ZohoMail.messages.ALL`, `ZohoMail.accounts.READ`, `ZohoMail.folders.READ`. |
+| Zoho data center | `com`, `in`, `eu`, `com.au`, `jp`, `sa` or `ca`. The wrong one fails with `invalid_client`. |
+| Mail account ID | Optional. Empty uses your default mail account. |
+| Default sender address | Optional. Empty uses the account's primary address. |
+| Allow permanent delete | Off by default, so deleting moves mail to Trash. |
+
+## Run without the plugin system
+
+The same server can be registered directly, with credentials in a local `.env` file instead:
 
 ```bash
 git clone https://github.com/veluralabs/zoho-mail-mcp.git
 cd zoho-mail-mcp
 npm install
 cp .env.example .env    # then fill in the Zoho credentials
-npm run check           # read-only smoke test: lists folders + latest inbox email
-npm run install:claude  # registers with Claude Code (user scope) and Claude Desktop
+npm run check           # read-only smoke test
+npm run install:claude  # registers with Claude Code and Claude Desktop
 ```
-
-`npm run install:claude -- code` or `-- desktop` registers with only one of them. Restart Claude Desktop afterwards. The registration contains only the path to `src/index.js` — no secrets.
-
-Manual registration, if you prefer:
-
-```bash
-claude mcp add --scope user zoho-mail -- node /absolute/path/to/zoho-mail-mcp/src/index.js
-```
-
-## Configuration (`.env`)
-
-| Variable | Notes |
-|---|---|
-| `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN` | OAuth self-client credentials |
-| `ZOHO_ACCOUNTS_URL`, `ZOHO_MAIL_API` | Must match your data center. India: `https://accounts.zoho.in` / `https://mail.zoho.in/api`. The wrong region returns `invalid_client`. |
-| `ZOHO_ACCOUNT_ID` | Mail account ID |
-| `ZOHO_FROM_ADDRESS` | Optional default sender |
-| `ZOHO_DOWNLOAD_DIR` | Optional; default `~/Downloads/zoho-mail-attachments` |
-| `ZOHO_ALLOW_PERMANENT_DELETE` | Optional; `true` lets `zoho_delete_email` expunge. Off by default (delete moves to Trash). |
-
-Required OAuth scopes: `ZohoMail.messages.ALL`, `ZohoMail.accounts.READ`, `ZohoMail.folders.READ`.
 
 ## Tools (38)
 
@@ -82,6 +88,6 @@ Not included, because the current OAuth grant lacks the scope: folder create/ren
 ## Behaviour worth knowing
 
 - **IDs are strings.** Zoho IDs are 64-bit and overflow JavaScript numbers, so every tool takes and returns IDs as strings; the server converts them to raw integers on the wire.
-- **Token handling.** The access token is cached in memory and in `.token-cache.json` (git-ignored) until 60s before expiry, because Zoho throttles refreshes (~10 per 10 minutes). On a 401 the server refreshes once and retries once. Zoho returns HTTP 200 with `{"error": …}` on a failed refresh; that is detected.
+- **Token handling.** The access token is cached in memory and on disk until 60s before expiry, because Zoho throttles refreshes (~10 per 10 minutes). On a 401 the server refreshes once and retries once. Zoho returns HTTP 200 with `{"error": …}` on a failed refresh; that is detected.
 - **No unread counts** in the folders response. Use `zoho_list_emails` with `status: "unread"`.
 - **Sending is real.** `zoho_send_email` and `zoho_reply_to_email` send immediately.
