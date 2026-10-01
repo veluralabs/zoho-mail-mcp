@@ -30,11 +30,11 @@ List and search return summaries only. To read an email, call `zoho_get_email_co
 
 ## IDs
 
-Always pass `messageId`, `folderId`, `threadId` and `labelId` as strings, exactly as the tools returned them. They are 64-bit numbers and are corrupted if written as JSON numbers.
+Always pass `messageId`, `folderId` and `threadId` as strings, exactly as the tools returned them. They are 64-bit numbers and are corrupted if written as JSON numbers.
 
 ## Sending
 
-`zoho_send_email` and `zoho_reply_to_email` send real mail immediately and cannot be undone. Before calling either, show the user the recipients, subject and body and get a clear yes. When the user only wants something prepared, use `zoho_save_draft`.
+`zoho_send_email` and `zoho_reply_to_email` send real mail immediately and cannot be undone. A scheduled send waits in the Outbox, where deleting it cancels it; give a custom time as `DD/MM/YYYY HH:MM:SS` (day first). Before calling either, show the user the recipients, subject and body and get a clear yes. When the user only wants something prepared, use `zoho_save_draft`.
 
 To attach a file, call `zoho_upload_attachment` with the local path first, then pass the returned object in `attachments`.
 
@@ -42,4 +42,4 @@ To attach a file, call `zoho_upload_attachment` with the local path first, then 
 
 The update tools take either `messageId` (individual emails) or `threadId` (whole conversations). Summarise what will change and how many emails are affected before bulk moves, spam marking or deletes. `zoho_delete_email` moves mail to Trash unless the user has enabled permanent delete in the plugin configuration.
 
-Label tools need label IDs, which this plugin cannot list. Take them from the `labelId` fields on emails.
+To find labelled mail, search with `label:<label name>`. Labels can't be applied or removed one by one; `zoho_remove_all_labels_from_emails` and `zoho_remove_all_labels_from_threads` clear them all.

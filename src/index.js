@@ -82,7 +82,6 @@ tool(
     limit: z.number().int().min(1).max(200).optional().describe("Number of emails, 1-200 (default 10)"),
     status: z.enum(["read", "unread", "all"]).optional(),
     flagid: z.number().int().min(0).max(3).optional().describe("0 not set, 1 info, 2 important, 3 follow-up"),
-    labelid: id("Label ID").optional(),
     threadId: id("Thread ID — list the emails of one conversation").optional(),
     sortBy: z.enum(["date", "messageId", "size"]).optional(),
     sortorder: z.boolean().optional().describe("true ascending, false descending (default)"),
@@ -246,24 +245,35 @@ const compose = {
 };
 
 const schedule = {
-  isSchedule: z.boolean().optional().describe("Schedule instead of sending now"),
+  isSchedule: z.boolean().optional().describe("Schedule instead of sending now. Scheduled mail waits in the Outbox."),
   scheduleType: z
     .number()
     .int()
     .min(1)
     .max(6)
     .optional()
-    .describe("1 = in 1h, 2 = in 2h, 3 = in 4h, 4 = next morning, 5 = next afternoon, 6 = custom (needs timeZone + scheduleTime)"),
-  timeZone: z.string().optional().describe('e.g. "Asia/Kolkata"; required when scheduleType is 6'),
-  scheduleTime: z.string().optional().describe("MM/DD/YYYY HH:MM:SS; required when scheduleType is 6"),
+    .describe("1 = in 1h, 2 = in 2h, 3 = in 4h, 4 = next morning, 5 = next afternoon, 6 = custom (needs scheduleTime)"),
+  timeZone: z
+    .string()
+    .optional()
+    .describe('IANA time zone, e.g. "Asia/Kolkata". Zoho needs it for every scheduled send; defaults to this computer\'s time zone.'),
+  scheduleTime: z
+    .string()
+    .regex(/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/, "use DD/MM/YYYY HH:MM:SS")
+    .optional()
+    .describe("Custom send time for scheduleType 6, as DD/MM/YYYY HH:MM:SS in timeZone (day first, e.g. 14/10/2026 09:30:00). Must be in the future."),
 };
+
+// Zoho rejects a scheduled send without timeZone, even for the relative schedule types.
+const withSchedule = (a) =>
+  a.isSchedule ? { ...a, timeZone: a.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone } : a;
 
 tool(
   "zoho_send_email",
   "Send an email (optionally with attachments and/or scheduled). This sends real mail immediately — confirm recipients and content with the user first. For attachments, call zoho_upload_attachment first and pass the returned objects.",
   { ...compose, ...schedule },
   WRITE,
-  async (a) => zoho("POST", "/messages", { body: { ...a, fromAddress: await fromAddress(a.fromAddress) } })
+  async (a) => zoho("POST", "/messages", { body: { ...withSchedule(a), fromAddress: await fromAddress(a.fromAddress) } })
 );
 
 tool(
@@ -287,7 +297,7 @@ tool(
   WRITE,
   async ({ messageId, ...a }) =>
     zoho("POST", `/messages/${messageId}`, {
-      body: { ...a, action: "reply", fromAddress: await fromAddress(a.fromAddress) },
+      body: { ...withSchedule(a), action: "reply", fromAddress: await fromAddress(a.fromAddress) },
     })
 );
 
@@ -316,18 +326,14 @@ const scope = {
   folderId: folderId.optional(),
 };
 const archive = { isArchive: z.boolean().optional().describe("Set true when the targets are archived emails") };
-const labelIds = ids("Label ID").describe(
-  "Label IDs. Note: this server's OAuth grant has no labels scope, so label IDs cannot be listed here; get them from the labelId fields of emails or the Zoho Mail UI."
-);
 
 function updateBody(mode, a) {
-  const { messageId, threadId, labelId, folderId, destfolderId, ...rest } = a;
+  const { messageId, threadId, folderId, destfolderId, ...rest } = a;
   return {
     mode,
     ...rest,
     ...(messageId && { messageId: bigIds(messageId) }),
     ...(threadId && { threadId: bigIds(threadId) }),
-    ...(labelId && { labelId: bigIds(labelId) }),
     ...(folderId && { folderId: bigId(folderId) }),
     ...(destfolderId && { destfolderId: bigId(destfolderId) }),
   };
@@ -349,8 +355,6 @@ const MESSAGE_UPDATES = [
     "Set or clear the flag on emails.",
     { flagid: z.enum(["info", "important", "followup", "flag_not_set"]), ...scope, ...archive },
   ],
-  ["zoho_apply_labels_to_emails", "applyLabel", "Apply labels to emails.", { labelId: labelIds, ...scope, ...archive }],
-  ["zoho_remove_labels_from_emails", "removeLabel", "Remove specific labels from emails.", { labelId: labelIds, ...scope }],
   ["zoho_remove_all_labels_from_emails", "removeAllLabels", "Remove every label from emails.", scope],
   ["zoho_archive_emails", "archiveMails", "Archive emails. On most accounts this moves them to the Archive folder; use zoho_move_emails to move them back.", {}],
   ["zoho_mark_emails_spam", "moveToSpam", "Mark emails as spam (moves them to the Spam folder).", scope],
@@ -386,8 +390,6 @@ const THREAD_UPDATES = [
     "Move whole threads to another folder.",
     { destfolderId: id("Destination folder ID") },
   ],
-  ["zoho_apply_labels_to_threads", "applyLabel", "Apply labels to whole threads.", { labelId: labelIds }],
-  ["zoho_remove_labels_from_threads", "removeLabel", "Remove specific labels from whole threads.", { labelId: labelIds }],
   ["zoho_remove_all_labels_from_threads", "removeAllLabels", "Remove every label from whole threads.", {}],
   ["zoho_mark_threads_read", "markAsRead", "Mark whole threads as read.", {}],
   ["zoho_mark_threads_unread", "markAsUnread", "Mark whole threads as unread.", {}],

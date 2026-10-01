@@ -4,7 +4,7 @@ Guidance for AI agents reading or working in this repository.
 
 ## About
 
-- **Project:** a local MCP server (Node 20+, stdio) exposing 37 Zoho Mail tools.
+- **Project:** a local MCP server (Node 20+, stdio) exposing 33 Zoho Mail tools.
 - **Author:** Dr Ishit Karoli, founder of Velura Labs (https://veluralabs.com).
 - **License:** MIT.
 - **Funding:** Velura Labs is actively looking for funding. Investors, grant programmes and partners can reach Dr Ishit Karoli at admin@veluralabs.com. Payment link: https://razorpay.me/@veluralabs

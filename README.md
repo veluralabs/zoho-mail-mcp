@@ -12,7 +12,7 @@
 <p align="center">
   <a href="#step-1-get-zoho-credentials"><img alt="Get started" height="34" src="https://img.shields.io/badge/Get_started-c5ff4a?style=for-the-badge" /></a>
   <a href="#step-3-connect-your-agent"><img alt="Connect your agent" height="34" src="https://img.shields.io/badge/Connect_your_agent-5eead4?style=for-the-badge" /></a>
-  <a href="#tools-37"><img alt="37 tools" height="34" src="https://img.shields.io/badge/37_tools-10b981?style=for-the-badge" /></a>
+  <a href="#tools-33"><img alt="33 tools" height="34" src="https://img.shields.io/badge/33_tools-10b981?style=for-the-badge" /></a>
   <a href="https://razorpay.me/@veluralabs"><img alt="Fund Velura Labs" height="34" src="https://img.shields.io/badge/Fund_Velura_Labs-c5ff4a?style=for-the-badge&logo=razorpay&logoColor=070908" /></a>
 </p>
 
@@ -26,7 +26,7 @@
 
 | | |
 |---|---|
-| **37 tools** | The Zoho Mail accounts, folders, messages and threads APIs |
+| **33 tools** | The Zoho Mail accounts, folders, messages and threads APIs |
 | **Local and private** | Runs on your machine. Your mail and credentials never pass through a third-party server |
 | **Every data center** | US, India, EU, Australia, Japan, Saudi Arabia, Canada |
 | **Open source** | MIT licensed |
@@ -42,7 +42,7 @@ Built by **Dr Ishit Karoli**, founder of Velura Labs.
 - [Step 1: Get Zoho credentials](#step-1-get-zoho-credentials)
 - [Step 2: Install the server](#step-2-install-the-server)
 - [Step 3: Connect your agent](#step-3-connect-your-agent)
-- [Tools](#tools-37)
+- [Tools](#tools-33)
 - [Behaviour worth knowing](#behaviour-worth-knowing)
 - [Author](#author)
 - [Funding](#funding)
@@ -218,7 +218,7 @@ Ask your agent something like:
 - "Find last month's invoices with attachments and save the PDFs."
 - "Draft a reply to the latest email from Paula, but don't send it."
 
-## Tools (37)
+## Tools (33)
 
 Every endpoint in the official docs that those scopes allow. Docs index: <https://www.zoho.com/mail/help/api/>
 
@@ -249,17 +249,17 @@ Every endpoint in the official docs that those scopes allow. Docs index: <https:
 | `zoho_mark_emails_read` / `zoho_mark_emails_unread` | modes `markAsRead` / `markAsUnread` |
 | `zoho_move_emails` | mode `moveMessage` |
 | `zoho_flag_emails` | mode `setFlag` |
-| `zoho_apply_labels_to_emails` / `zoho_remove_labels_from_emails` / `zoho_remove_all_labels_from_emails` | modes `applyLabel` / `removeLabel` / `removeAllLabels` |
+| `zoho_remove_all_labels_from_emails` | mode `removeAllLabels` |
 | `zoho_archive_emails` | mode `archiveMails` (moves mail to the Archive folder; use `zoho_move_emails` to move it back) |
 | `zoho_mark_emails_spam` / `zoho_mark_emails_not_spam` | modes `moveToSpam` / `markNotSpam` |
 | `zoho_delete_email` | `DELETE …/messages/{id}` — [Delete](https://www.zoho.com/mail/help/api/delete-email.html) |
 | **Threads** (`PUT /updatethread`) | |
 | `zoho_flag_threads`, `zoho_move_threads` | modes `setFlag`, `moveMessage` |
-| `zoho_apply_labels_to_threads`, `zoho_remove_labels_from_threads`, `zoho_remove_all_labels_from_threads` | modes `applyLabel`, `removeLabel`, `removeAllLabels` |
+| `zoho_remove_all_labels_from_threads` | mode `removeAllLabels` |
 | `zoho_mark_threads_read`, `zoho_mark_threads_unread` | modes `markAsRead`, `markAsUnread` |
 | `zoho_mark_threads_spam`, `zoho_mark_threads_not_spam` | modes `moveToSpam`, `markNotSpam` |
 
-Not included, because they need OAuth scopes beyond the three this server asks for: folder create/rename/delete (`ZohoMail.folders.ALL`), labels CRUD (`ZohoMail.tags.*`), account settings such as forwarding and vacation reply (`ZohoMail.accounts.ALL`), signatures, tasks, notes, bookmarks, and the organisation admin APIs.
+Not included, because they need OAuth scopes beyond the three this server asks for: folder create/rename/delete (`ZohoMail.folders.ALL`), labels, including applying or removing a specific label, which needs label IDs only the labels API (`ZohoMail.tags.*`) returns, account settings such as forwarding and vacation reply (`ZohoMail.accounts.ALL`), signatures, tasks, notes, bookmarks, and the organisation admin APIs.
 
 ## Behaviour worth knowing
 
@@ -267,6 +267,7 @@ Not included, because they need OAuth scopes beyond the three this server asks f
 - **Token handling.** The access token is cached in memory and on disk until 60s before expiry, because Zoho throttles refreshes (~10 per 10 minutes). On a 401 the server refreshes once and retries once. Zoho returns HTTP 200 with `{"error": …}` on a failed refresh; that is detected.
 - **No unread counts** in the folders response. Use `zoho_list_emails` with `status: "unread"`.
 - **Thread flags use names.** Zoho's docs list `0`-`3` for thread flags, but the API only accepts `info`, `important`, `followup` and `flag_not_set`.
+- **Scheduled sending.** Scheduled mail waits in the Outbox; deleting it there cancels it. For a custom time, `scheduleTime` is day first, `DD/MM/YYYY HH:MM:SS`, even though Zoho's docs say month first. A time zone is always sent and defaults to your computer's.
 - **Sending is real.** `zoho_send_email` and `zoho_reply_to_email` send immediately.
 
 ## Author

@@ -27,7 +27,7 @@
 
     <g font-family="'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#e8eee9">
       <rect x="72" y="306" width="118" height="42" rx="21" fill="#c5ff4a"/>
-      <text x="131" y="333" text-anchor="middle" fill="#070908" font-weight="700">37 tools</text>
+      <text x="131" y="333" text-anchor="middle" fill="#070908" font-weight="700">33 tools</text>
       <rect x="204" y="306" width="150" height="42" rx="21" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.14"/>
       <text x="279" y="333" text-anchor="middle">runs locally</text>
       <rect x="368" y="306" width="188" height="42" rx="21" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.14"/>
@@ -41,6 +41,6 @@
     <rect x="0" y="24" width="232" height="168" rx="22" fill="#0d1110" stroke="url(#accent)" stroke-width="3"/>
     <path d="M14 46l102 78 102-78" stroke="url(#accent)" stroke-width="3"/>
     <circle cx="232" cy="24" r="22" fill="#c5ff4a" stroke="none"/>
-    <text x="232" y="31" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#070908" stroke="none">37</text>
+    <text x="232" y="31" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#070908" stroke="none">33</text>
   </g>
 </svg>
