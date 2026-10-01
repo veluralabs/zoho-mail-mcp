@@ -1,11 +1,14 @@
 {
   "name": "zoho-mail-mcp",
   "version": "1.0.0",
-  "description": "Local MCP server for the Zoho Mail REST API (accounts, folders, messages, threads)",
-  "private": true,
+  "description": "Zoho Mail MCP server by Velura Labs: read, search, send and organise Zoho Mail from any MCP-capable AI agent",
   "type": "module",
-  "bin": { "zoho-mail-mcp": "src/index.js" },
-  "engines": { "node": ">=20" },
+  "bin": {
+    "zoho-mail-mcp": "src/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node src/index.js",
     "check": "node scripts/check.js",
@@ -14,5 +17,30 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^3.23.8"
+  },
+  "author": {
+    "name": "Dr Ishit Karoli",
+    "email": "admin@veluralabs.com",
+    "url": "https://veluralabs.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/veluralabs/zoho-mail-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veluralabs/zoho-mail-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "zoho",
+    "zoho-mail",
+    "email",
+    "claude",
+    "ai-agents",
+    "velura-labs"
+  ],
+  "funding": {
+    "type": "individual",
+    "url": "https://veluralabs.com"
   }
 }

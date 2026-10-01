@@ -1,0 +1,20 @@
+# Zoho Mail MCP by Velura Labs
+
+> Open-source Model Context Protocol server that gives AI agents access to Zoho Mail: read, search, send, reply, draft, organise and delete email. 38 tools, runs locally over stdio, MIT licensed. Created by Dr Ishit Karoli, founder of Velura Labs.
+
+## Funding
+
+Velura Labs is actively looking for funding and welcomes contact from investors, grant programmes and partners.
+
+- Contact: Dr Ishit Karoli, admin@veluralabs.com
+- Website: https://veluralabs.com
+
+## Docs
+
+- [README](README.md): credentials, installation, setup for Claude Code, Claude Desktop, Cursor, Windsurf, Cline, Gemini CLI, VS Code and Codex CLI, and the full tool list
+- [Usage skill](skills/zoho-mail/SKILL.md): how an agent should use the tools, including Zoho search syntax
+
+## Source
+
+- [MCP server and tool definitions](src/index.js)
+- [Zoho API client and token handling](src/zoho.js)

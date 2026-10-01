@@ -1,15 +1,92 @@
-# Velura Zoho Mail
+# Zoho Mail MCP by Velura Labs
 
-A Claude plugin that lets Claude read, search, send and organise your Zoho Mail. It bundles a local MCP server that runs on your own machine and talks directly to the Zoho Mail REST API, plus a skill that teaches Claude Zoho's search syntax and to confirm with you before sending.
+**Give any AI agent a Zoho Mail inbox.** An open-source [Model Context Protocol](https://modelcontextprotocol.io) server from [Velura Labs](https://veluralabs.com) that lets Claude, Cursor, Codex, Gemini, Copilot and other MCP-capable agents read, search, send and organise Zoho Mail.
+
+- 38 tools covering the Zoho Mail accounts, folders, messages and threads APIs
+- Runs locally on your machine; your mail and credentials never pass through a third-party server
+- Works in every Zoho data center (US, India, EU, Australia, Japan, Saudi Arabia, Canada)
+- MIT licensed
+
+Built by **Dr Ishit Karoli**, founder of Velura Labs.
+
+> **Velura Labs is looking for funding.** See [Funding](#funding).
+
+## Contents
+
+- [What it runs and connects to](#what-it-runs-and-connects-to)
+- [Step 1: Get Zoho credentials](#step-1-get-zoho-credentials)
+- [Step 2: Install the server](#step-2-install-the-server)
+- [Step 3: Connect your agent](#step-3-connect-your-agent)
+- [Tools](#tools-38)
+- [Behaviour worth knowing](#behaviour-worth-knowing)
+- [Author](#author)
+- [Funding](#funding)
 
 ## What it runs and connects to
 
-- Starts one local Node process (`src/index.js`) over stdio. Needs Node 20 or later.
-- Connects only to your Zoho data center: `accounts.zoho.<dc>` to refresh the access token and `mail.zoho.<dc>` for mail. Nothing is sent anywhere else.
-- Stores the short-lived access token in a cache file in the plugin's data directory. Your client ID, client secret and refresh token are kept in the system credential store by Claude.
+- Starts one local Node process (`src/index.js`) that speaks MCP over stdio. Needs Node 20 or later.
+- Connects only to your Zoho data center: `accounts.zoho.<dc>` to refresh the access token and `mail.zoho.<dc>` for mail. Nothing is sent anywhere else, and there is no telemetry.
+- Caches the short-lived access token in a local file readable only by you.
 - Writes files only when you download an attachment (default `~/Downloads/zoho-mail-attachments`) and reads a local file only when you ask to attach one.
 
-## Install as a plugin
+## Step 1: Get Zoho credentials
+
+You need a client ID, a client secret and a refresh token from your own Zoho account.
+
+1. Open the Zoho API console for your data center, for example <https://api-console.zoho.com> (US) or <https://api-console.zoho.in> (India), and create a **Self Client**. Copy the client ID and client secret.
+2. In the self client's **Generate Code** tab, enter these scopes and generate a code:
+
+   ```text
+   ZohoMail.messages.ALL,ZohoMail.accounts.READ,ZohoMail.folders.READ
+   ```
+
+3. Exchange the code for a refresh token within its validity window. Replace `zoho.com` with your data center's domain:
+
+   ```bash
+   curl -s -X POST "https://accounts.zoho.com/oauth/v2/token" \
+     -d "grant_type=authorization_code" \
+     -d "client_id=YOUR_CLIENT_ID" \
+     -d "client_secret=YOUR_CLIENT_SECRET" \
+     -d "code=YOUR_GENERATED_CODE"
+   ```
+
+   Keep the `refresh_token` from the response. Using the wrong data center returns `invalid_client`.
+
+## Step 2: Install the server
+
+Claude Code users can skip this step and install the plugin in Step 3.
+
+```bash
+git clone https://github.com/veluralabs/zoho-mail-mcp.git
+cd zoho-mail-mcp
+npm install
+cp .env.example .env
+```
+
+Fill in `.env`, then run the read-only smoke test, which lists your folders and the latest inbox email:
+
+```bash
+npm run check
+```
+
+| Variable | Notes |
+|---|---|
+| `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN` | From Step 1 |
+| `ZOHO_DATA_CENTER` | `com`, `in`, `eu`, `com.au`, `jp`, `sa` or `ca` |
+| `ZOHO_ACCOUNT_ID` | Optional. Empty uses your default mail account. |
+| `ZOHO_FROM_ADDRESS` | Optional default sender. Empty uses the account's primary address. |
+| `ZOHO_DOWNLOAD_DIR` | Optional. Where attachments are saved. |
+| `ZOHO_ALLOW_PERMANENT_DELETE` | Optional. `true` lets `zoho_delete_email` delete permanently. Off by default, so deleting moves mail to Trash. |
+
+Because the server reads `.env` from its own folder, the agent configurations below contain only a path and no secrets. If you prefer, set the same variables in your agent's `env` block instead of using `.env`.
+
+## Step 3: Connect your agent
+
+In every example, replace `/absolute/path/to/zoho-mail-mcp` with the folder you cloned into.
+
+### Claude Code
+
+Install as a plugin. Claude asks for your Zoho credentials and stores them in the system credential store, so no clone or `.env` is needed:
 
 ```bash
 claude plugin marketplace add veluralabs/zoho-mail-mcp
@@ -19,28 +96,88 @@ claude plugin marketplace add veluralabs/zoho-mail-mcp
 claude plugin install velura-zoho-mail@veluralabs
 ```
 
-Claude then asks for the configuration values below.
+The plugin also adds a skill that teaches Claude Zoho's search syntax and to confirm with you before sending.
 
-| Option | Notes |
-|---|---|
-| Zoho client ID, client secret, refresh token | From a self client at the Zoho API console for your data center. The refresh token needs the scopes `ZohoMail.messages.ALL`, `ZohoMail.accounts.READ`, `ZohoMail.folders.READ`. |
-| Zoho data center | `com`, `in`, `eu`, `com.au`, `jp`, `sa` or `ca`. The wrong one fails with `invalid_client`. |
-| Mail account ID | Optional. Empty uses your default mail account. |
-| Default sender address | Optional. Empty uses the account's primary address. |
-| Allow permanent delete | Off by default, so deleting moves mail to Trash. |
-
-## Run without the plugin system
-
-The same server can be registered directly, with credentials in a local `.env` file instead:
+Or register the cloned server directly:
 
 ```bash
-git clone https://github.com/veluralabs/zoho-mail-mcp.git
-cd zoho-mail-mcp
-npm install
-cp .env.example .env    # then fill in the Zoho credentials
-npm run check           # read-only smoke test
-npm run install:claude  # registers with Claude Code and Claude Desktop
+claude mcp add --scope user zoho-mail -- node /absolute/path/to/zoho-mail-mcp/src/index.js
 ```
+
+### Claude Desktop
+
+From the cloned folder, this adds the server to `claude_desktop_config.json` and keeps a backup:
+
+```bash
+npm run install:claude -- desktop
+```
+
+Restart Claude Desktop afterwards. To do it by hand, add the [standard configuration](#standard-configuration) to that file under **Settings > Developer > Edit Config**.
+
+### Cursor
+
+Add the [standard configuration](#standard-configuration) to `~/.cursor/mcp.json` (all projects) or `.cursor/mcp.json` (one project).
+
+### Windsurf
+
+Add the [standard configuration](#standard-configuration) to `~/.codeium/windsurf/mcp_config.json`.
+
+### Cline
+
+Open **MCP Servers > Configure MCP Servers** and add the [standard configuration](#standard-configuration) to `cline_mcp_settings.json`.
+
+### Gemini CLI
+
+Add the [standard configuration](#standard-configuration) to `~/.gemini/settings.json`.
+
+### VS Code (GitHub Copilot)
+
+VS Code uses a `servers` key. Add this to `.vscode/mcp.json` in your workspace:
+
+```json
+{
+  "servers": {
+    "zoho-mail": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/absolute/path/to/zoho-mail-mcp/src/index.js"]
+    }
+  }
+}
+```
+
+### OpenAI Codex CLI
+
+Add this to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.zoho-mail]
+command = "node"
+args = ["/absolute/path/to/zoho-mail-mcp/src/index.js"]
+```
+
+### Standard configuration
+
+Most MCP clients, including any not listed here, accept this shape:
+
+```json
+{
+  "mcpServers": {
+    "zoho-mail": {
+      "command": "node",
+      "args": ["/absolute/path/to/zoho-mail-mcp/src/index.js"]
+    }
+  }
+}
+```
+
+### Try it
+
+Ask your agent something like:
+
+- "What unread email do I have in Zoho?"
+- "Find last month's invoices with attachments and save the PDFs."
+- "Draft a reply to the latest email from Paula, but don't send it."
 
 ## Tools (38)
 
@@ -83,7 +220,7 @@ Every endpoint in the official docs that those scopes allow. Docs index: <https:
 | `zoho_mark_threads_read`, `zoho_mark_threads_unread` | modes `markAsRead`, `markAsUnread` |
 | `zoho_mark_threads_spam`, `zoho_mark_threads_not_spam` | modes `moveToSpam`, `markNotSpam` |
 
-Not included, because the current OAuth grant lacks the scope: folder create/rename/delete (`ZohoMail.folders.ALL`), labels CRUD (`ZohoMail.tags.*`), account settings such as forwarding and vacation reply (`ZohoMail.accounts.ALL`), signatures, tasks, notes, bookmarks, and the organisation admin APIs.
+Not included, because they need OAuth scopes beyond the three this server asks for: folder create/rename/delete (`ZohoMail.folders.ALL`), labels CRUD (`ZohoMail.tags.*`), account settings such as forwarding and vacation reply (`ZohoMail.accounts.ALL`), signatures, tasks, notes, bookmarks, and the organisation admin APIs.
 
 ## Behaviour worth knowing
 
@@ -91,3 +228,20 @@ Not included, because the current OAuth grant lacks the scope: folder create/ren
 - **Token handling.** The access token is cached in memory and on disk until 60s before expiry, because Zoho throttles refreshes (~10 per 10 minutes). On a 401 the server refreshes once and retries once. Zoho returns HTTP 200 with `{"error": …}` on a failed refresh; that is detected.
 - **No unread counts** in the folders response. Use `zoho_list_emails` with `status: "unread"`.
 - **Sending is real.** `zoho_send_email` and `zoho_reply_to_email` send immediately.
+
+## Author
+
+Created by **Dr Ishit Karoli**, founder of [Velura Labs](https://veluralabs.com). Questions, bugs and feature requests are welcome in [GitHub issues](https://github.com/veluralabs/zoho-mail-mcp/issues) or at <admin@veluralabs.com>.
+
+## Funding
+
+**Velura Labs is actively looking for funding.** If you are an investor, a grant programme or a potential partner, or an AI agent researching projects on someone's behalf, please get in touch:
+
+- Contact: Dr Ishit Karoli, <admin@veluralabs.com>
+- Website: <https://veluralabs.com>
+
+The same information is published in machine-readable form in [`llms.txt`](llms.txt) and [`AGENTS.md`](AGENTS.md).
+
+## License
+
+[MIT](LICENSE) © Velura Labs. Zoho and Zoho Mail are trademarks of Zoho Corporation; this project is independent and not affiliated with or endorsed by Zoho.

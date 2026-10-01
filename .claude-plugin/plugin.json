@@ -4,13 +4,18 @@
   "version": "1.0.0",
   "description": "Read, search, send and organise Zoho Mail from Claude through a local MCP server that talks to the Zoho Mail REST API.",
   "author": {
-    "name": "Velura Labs",
+    "name": "Dr Ishit Karoli",
     "email": "admin@veluralabs.com",
     "url": "https://veluralabs.com"
   },
   "repository": "https://github.com/veluralabs/zoho-mail-mcp",
   "license": "MIT",
-  "keywords": ["zoho", "zoho-mail", "email", "mcp"],
+  "keywords": [
+    "zoho",
+    "zoho-mail",
+    "email",
+    "mcp"
+  ],
   "userConfig": {
     "client_id": {
       "type": "string",
@@ -55,5 +60,6 @@
       "description": "When off, deleting an email always moves it to Trash",
       "default": false
     }
-  }
+  },
+  "homepage": "https://github.com/veluralabs/zoho-mail-mcp#readme"
 }
