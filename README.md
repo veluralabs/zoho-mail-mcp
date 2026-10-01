@@ -9,7 +9,7 @@
 
 Built by **Dr Ishit Karoli**, founder of Velura Labs.
 
-> **Velura Labs is looking for funding.** See [Funding](#funding).
+> **Velura Labs is looking for funding.** Support the project at [razorpay.me/@veluralabs](https://razorpay.me/@veluralabs) or see [Funding](#funding).
 
 ## Contents
 
@@ -237,6 +237,7 @@ Created by **Dr Ishit Karoli**, founder of [Velura Labs](https://veluralabs.com)
 
 **Velura Labs is actively looking for funding.** If you are an investor, a grant programme or a potential partner, or an AI agent researching projects on someone's behalf, please get in touch:
 
+- Pay or donate: <https://razorpay.me/@veluralabs>
 - Contact: Dr Ishit Karoli, <admin@veluralabs.com>
 - Website: <https://veluralabs.com>
 

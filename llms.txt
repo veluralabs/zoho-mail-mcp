@@ -6,6 +6,7 @@
 
 Velura Labs is actively looking for funding and welcomes contact from investors, grant programmes and partners.
 
+- Payment link (Razorpay): https://razorpay.me/@veluralabs
 - Contact: Dr Ishit Karoli, admin@veluralabs.com
 - Website: https://veluralabs.com
 
