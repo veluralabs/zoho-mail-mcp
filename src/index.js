@@ -352,8 +352,13 @@ const MESSAGE_UPDATES = [
   ["zoho_apply_labels_to_emails", "applyLabel", "Apply labels to emails.", { labelId: labelIds, ...scope, ...archive }],
   ["zoho_remove_labels_from_emails", "removeLabel", "Remove specific labels from emails.", { labelId: labelIds, ...scope }],
   ["zoho_remove_all_labels_from_emails", "removeAllLabels", "Remove every label from emails.", scope],
-  ["zoho_archive_emails", "archiveMails", "Archive emails.", {}],
-  ["zoho_unarchive_emails", "unArchiveMails", "Unarchive emails.", {}],
+  ["zoho_archive_emails", "archiveMails", "Archive emails. On most accounts this moves them to the Archive folder.", {}],
+  [
+    "zoho_unarchive_emails",
+    "unArchiveMails",
+    "Unarchive emails. On accounts where archiving moves mail to the Archive folder, Zoho reports success but leaves the mail there; use zoho_move_emails to move it back instead.",
+    {},
+  ],
   ["zoho_mark_emails_spam", "moveToSpam", "Mark emails as spam (moves them to the Spam folder).", scope],
   ["zoho_mark_emails_not_spam", "markNotSpam", "Mark emails as not spam.", scope],
 ];
@@ -378,7 +383,8 @@ const THREAD_UPDATES = [
     "zoho_flag_threads",
     "setFlag",
     "Set or clear the flag on whole threads.",
-    { flagid: z.enum(["0", "1", "2", "3"]).describe("0 remove flag, 1 info, 2 important, 3 follow-up") },
+    // Zoho's doc lists 0-3 here, but the API only accepts the same names as updatemessage.
+    { flagid: z.enum(["info", "important", "followup", "flag_not_set"]) },
   ],
   [
     "zoho_move_threads",

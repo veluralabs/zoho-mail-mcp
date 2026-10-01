@@ -156,7 +156,8 @@ export async function zoho(method, apiPath, { query, body, rawBody, contentType,
   const send = async (force) => {
     const headers = {
       Authorization: `Zoho-oauthtoken ${await accessToken(force)}`,
-      Accept: "application/json",
+      // Zoho answers 406 to a JSON-only Accept on the binary download endpoints.
+      Accept: binary ? "*/*" : "application/json",
     };
     let payload;
     if (rawBody !== undefined) {

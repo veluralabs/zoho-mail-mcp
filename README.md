@@ -266,6 +266,8 @@ Not included, because they need OAuth scopes beyond the three this server asks f
 - **IDs are strings.** Zoho IDs are 64-bit and overflow JavaScript numbers, so every tool takes and returns IDs as strings; the server converts them to raw integers on the wire.
 - **Token handling.** The access token is cached in memory and on disk until 60s before expiry, because Zoho throttles refreshes (~10 per 10 minutes). On a 401 the server refreshes once and retries once. Zoho returns HTTP 200 with `{"error": …}` on a failed refresh; that is detected.
 - **No unread counts** in the folders response. Use `zoho_list_emails` with `status: "unread"`.
+- **Unarchive may do nothing.** On accounts where archiving moves mail to the Archive folder, Zoho's unarchive call reports success but leaves the mail there. Use `zoho_move_emails` to move it back.
+- **Thread flags use names.** Zoho's docs list `0`-`3` for thread flags, but the API only accepts `info`, `important`, `followup` and `flag_not_set`.
 - **Sending is real.** `zoho_send_email` and `zoho_reply_to_email` send immediately.
 
 ## Author
