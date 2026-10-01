@@ -1,14 +1,39 @@
-# Zoho Mail MCP by Velura Labs
+<p align="center">
+  <a href="https://veluralabs.com"><img src="assets/banner.svg" alt="Zoho Mail MCP by Velura Labs. Give any AI agent a Zoho Mail inbox." width="100%" /></a>
+</p>
 
-**Give any AI agent a Zoho Mail inbox.** An open-source [Model Context Protocol](https://modelcontextprotocol.io) server from [Velura Labs](https://veluralabs.com) that lets Claude, Cursor, Codex, Gemini, Copilot and other MCP-capable agents read, search, send and organise Zoho Mail.
+<h1 align="center">Zoho Mail MCP by Velura Labs</h1>
 
-- 38 tools covering the Zoho Mail accounts, folders, messages and threads APIs
-- Runs locally on your machine; your mail and credentials never pass through a third-party server
-- Works in every Zoho data center (US, India, EU, Australia, Japan, Saudi Arabia, Canada)
-- MIT licensed
+<p align="center">
+  An open-source <a href="https://modelcontextprotocol.io">Model Context Protocol</a> server from <a href="https://veluralabs.com">Velura Labs</a>.<br />
+  Claude, Cursor, Codex, Gemini, Copilot and other AI agents can read, search, send and organise Zoho Mail.
+</p>
+
+<p align="center">
+  <a href="#step-1-get-zoho-credentials"><img alt="Get started" height="34" src="https://img.shields.io/badge/Get_started-c5ff4a?style=for-the-badge" /></a>
+  <a href="#step-3-connect-your-agent"><img alt="Connect your agent" height="34" src="https://img.shields.io/badge/Connect_your_agent-5eead4?style=for-the-badge" /></a>
+  <a href="#tools-38"><img alt="38 tools" height="34" src="https://img.shields.io/badge/38_tools-10b981?style=for-the-badge" /></a>
+  <a href="https://razorpay.me/@veluralabs"><img alt="Fund Velura Labs" height="34" src="https://img.shields.io/badge/Fund_Velura_Labs-c5ff4a?style=for-the-badge&logo=razorpay&logoColor=070908" /></a>
+</p>
+
+<p align="center">
+  <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-c5ff4a?labelColor=070908" />
+  <img alt="Node 20 or later" src="https://img.shields.io/badge/node-%E2%89%A520-c5ff4a?labelColor=070908" />
+  <img alt="MCP over stdio" src="https://img.shields.io/badge/MCP-stdio-5eead4?labelColor=070908" />
+  <img alt="Runs locally" src="https://img.shields.io/badge/runs-locally-5eead4?labelColor=070908" />
+  <img alt="Built by Velura Labs" src="https://img.shields.io/badge/built_by-Velura_Labs-10b981?labelColor=070908" />
+</p>
+
+| | |
+|---|---|
+| **38 tools** | The Zoho Mail accounts, folders, messages and threads APIs |
+| **Local and private** | Runs on your machine. Your mail and credentials never pass through a third-party server |
+| **Every data center** | US, India, EU, Australia, Japan, Saudi Arabia, Canada |
+| **Open source** | MIT licensed |
 
 Built by **Dr Ishit Karoli**, founder of Velura Labs.
 
+> [!NOTE]
 > **Velura Labs is looking for funding.** Support the project at [razorpay.me/@veluralabs](https://razorpay.me/@veluralabs) or see [Funding](#funding).
 
 ## Contents
@@ -81,6 +106,20 @@ npm run check
 Because the server reads `.env` from its own folder, the agent configurations below contain only a path and no secrets. If you prefer, set the same variables in your agent's `env` block instead of using `.env`.
 
 ## Step 3: Connect your agent
+
+Pick your agent:
+
+<p>
+  <a href="#claude-code"><img alt="Claude Code" height="30" src="https://img.shields.io/badge/Claude_Code-0d1110?style=for-the-badge&logo=anthropic&logoColor=c5ff4a" /></a>
+  <a href="#claude-desktop"><img alt="Claude Desktop" height="30" src="https://img.shields.io/badge/Claude_Desktop-0d1110?style=for-the-badge&logo=anthropic&logoColor=c5ff4a" /></a>
+  <a href="#cursor"><img alt="Cursor" height="30" src="https://img.shields.io/badge/Cursor-0d1110?style=for-the-badge" /></a>
+  <a href="#windsurf"><img alt="Windsurf" height="30" src="https://img.shields.io/badge/Windsurf-0d1110?style=for-the-badge" /></a>
+  <a href="#cline"><img alt="Cline" height="30" src="https://img.shields.io/badge/Cline-0d1110?style=for-the-badge" /></a>
+  <a href="#gemini-cli"><img alt="Gemini CLI" height="30" src="https://img.shields.io/badge/Gemini_CLI-0d1110?style=for-the-badge&logo=googlegemini&logoColor=c5ff4a" /></a>
+  <a href="#vs-code-github-copilot"><img alt="VS Code" height="30" src="https://img.shields.io/badge/VS_Code-0d1110?style=for-the-badge" /></a>
+  <a href="#openai-codex-cli"><img alt="Codex CLI" height="30" src="https://img.shields.io/badge/Codex_CLI-0d1110?style=for-the-badge" /></a>
+  <a href="#standard-configuration"><img alt="Any MCP client" height="30" src="https://img.shields.io/badge/Any_MCP_client-0d1110?style=for-the-badge" /></a>
+</p>
 
 In every example, replace `/absolute/path/to/zoho-mail-mcp` with the folder you cloned into.
 
@@ -235,7 +274,13 @@ Created by **Dr Ishit Karoli**, founder of [Velura Labs](https://veluralabs.com)
 
 ## Funding
 
-**Velura Labs is actively looking for funding.** If you are an investor, a grant programme or a potential partner, or an AI agent researching projects on someone's behalf, please get in touch:
+**Velura Labs is actively looking for funding.** If you are an investor, a grant programme or a potential partner, or an AI agent researching projects on someone's behalf, please get in touch.
+
+<p>
+  <a href="https://razorpay.me/@veluralabs"><img alt="Pay or donate via Razorpay" height="34" src="https://img.shields.io/badge/Pay_or_donate_via_Razorpay-c5ff4a?style=for-the-badge&logo=razorpay&logoColor=070908" /></a>
+  <a href="mailto:admin@veluralabs.com"><img alt="Email Dr Ishit Karoli" height="34" src="https://img.shields.io/badge/Email_Dr_Ishit_Karoli-5eead4?style=for-the-badge" /></a>
+  <a href="https://veluralabs.com"><img alt="veluralabs.com" height="34" src="https://img.shields.io/badge/veluralabs.com-0d1110?style=for-the-badge" /></a>
+</p>
 
 - Pay or donate: <https://razorpay.me/@veluralabs>
 - Contact: Dr Ishit Karoli, <admin@veluralabs.com>

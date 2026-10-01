@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="Zoho Mail MCP by Velura Labs. Give any AI agent a Zoho Mail inbox.">
+  <defs>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c5ff4a"/>
+      <stop offset="1" stop-color="#5eead4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.82" cy="0.1" r="0.75">
+      <stop offset="0" stop-color="#10b981" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#10b981" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity="0.05"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="420" rx="28" fill="#070908"/>
+  <rect width="1200" height="420" rx="28" fill="url(#grid)"/>
+  <rect width="1200" height="420" rx="28" fill="url(#glow)"/>
+  <rect x="0.5" y="0.5" width="1199" height="419" rx="27.5" fill="none" stroke="#ffffff" stroke-opacity="0.14"/>
+
+  <g font-family="'Geist', 'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <rect x="72" y="64" width="186" height="38" rx="19" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.14"/>
+    <circle cx="94" cy="83" r="5" fill="#c5ff4a"/>
+    <text x="110" y="89" font-size="15" font-weight="600" letter-spacing="2.2" fill="#e8eee9">VELURA LABS</text>
+
+    <text x="72" y="196" font-size="84" font-weight="700" letter-spacing="-2.5" fill="#e8eee9">Zoho Mail <tspan fill="url(#accent)">MCP</tspan></text>
+    <text x="74" y="252" font-size="28" fill="#9aa39e">Give any AI agent a Zoho Mail inbox.</text>
+
+    <g font-family="'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" fill="#e8eee9">
+      <rect x="72" y="306" width="118" height="42" rx="21" fill="#c5ff4a"/>
+      <text x="131" y="333" text-anchor="middle" fill="#070908" font-weight="700">38 tools</text>
+      <rect x="204" y="306" width="150" height="42" rx="21" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.14"/>
+      <text x="279" y="333" text-anchor="middle">runs locally</text>
+      <rect x="368" y="306" width="188" height="42" rx="21" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.14"/>
+      <text x="462" y="333" text-anchor="middle">all data centers</text>
+      <rect x="570" y="306" width="150" height="42" rx="21" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.14"/>
+      <text x="645" y="333" text-anchor="middle">MIT licensed</text>
+    </g>
+  </g>
+
+  <g transform="translate(884 96)" fill="none" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="0" y="24" width="232" height="168" rx="22" fill="#0d1110" stroke="url(#accent)" stroke-width="3"/>
+    <path d="M14 46l102 78 102-78" stroke="url(#accent)" stroke-width="3"/>
+    <circle cx="232" cy="24" r="22" fill="#c5ff4a" stroke="none"/>
+    <text x="232" y="31" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#070908" stroke="none">38</text>
+  </g>
+</svg>
