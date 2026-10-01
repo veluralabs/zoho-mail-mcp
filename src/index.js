@@ -352,13 +352,7 @@ const MESSAGE_UPDATES = [
   ["zoho_apply_labels_to_emails", "applyLabel", "Apply labels to emails.", { labelId: labelIds, ...scope, ...archive }],
   ["zoho_remove_labels_from_emails", "removeLabel", "Remove specific labels from emails.", { labelId: labelIds, ...scope }],
   ["zoho_remove_all_labels_from_emails", "removeAllLabels", "Remove every label from emails.", scope],
-  ["zoho_archive_emails", "archiveMails", "Archive emails. On most accounts this moves them to the Archive folder.", {}],
-  [
-    "zoho_unarchive_emails",
-    "unArchiveMails",
-    "Unarchive emails. On accounts where archiving moves mail to the Archive folder, Zoho reports success but leaves the mail there; use zoho_move_emails to move it back instead.",
-    {},
-  ],
+  ["zoho_archive_emails", "archiveMails", "Archive emails. On most accounts this moves them to the Archive folder; use zoho_move_emails to move them back.", {}],
   ["zoho_mark_emails_spam", "moveToSpam", "Mark emails as spam (moves them to the Spam folder).", scope],
   ["zoho_mark_emails_not_spam", "markNotSpam", "Mark emails as not spam.", scope],
 ];
